@@ -3,23 +3,31 @@ import { fileURLToPath } from 'url';
 
 import express from 'express';
 import dotenv from 'dotenv';
+import fetch from 'node-fetch';
 
 import { router as proxyRouter } from './proxy.js';
 
 dotenv.config();
+const url = 'https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/';
 
 const {
   PORT: port = 3001, // Mun verða proxyað af browser-sync í development
 } = process.env;
 
 const app = express();
+
 const path = dirname(fileURLToPath(import.meta.url));
 
 app.use(express.static(join(path, '../public')));
 
 // TODO setja upp proxy þjónustu
+app.use(proxyRouter);
+
 // TODO birta index.html skjal
 
+app.get('/', (req, res) => {
+  res.sendFile(join(path, '../index.html'));
+});
 /**
  * Middleware sem sér um 404 villur.
  *
@@ -30,7 +38,6 @@ app.use(express.static(join(path, '../public')));
 // eslint-disable-next-line no-unused-vars
 function notFoundHandler(req, res, next) {
   const title = 'Síða fannst ekki';
-  res.status(404).render('error', { title });
 }
 
 /**
@@ -45,7 +52,6 @@ function notFoundHandler(req, res, next) {
 function errorHandler(err, req, res, next) {
   console.error(err);
   const title = 'Villa kom upp';
-  res.status(500).render('error', { title });
 }
 
 app.use(notFoundHandler);

@@ -8,13 +8,24 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Nota proxy
   // Hreinsa header og upplýsingar þegar ný gögn eru sótt
   // Sterkur leikur að refactora úr virkni fyrir event handler í sér fall
-
-  const earthquakes = await fetchEarthquakes();
+  let url = document.URL;
+  let earthquakes;
+  let query;
+  if(url) {
+    query = url.split('?')[1];
+  }
+  if(query) {
+    const loading = document.querySelector('.loading');
+    const period = query.split('&')[0].split('=')[1];
+    const type = query.split('&')[1].split('=')[1];
+    console.log(type);
+    const result = await fetchEarthquakes(type, period);
+    const parent = loading.parentNode;
+    parent.removeChild(loading);
+    earthquakes = result.features;
+  }
 
   // Fjarlægjum loading skilaboð eftir að við höfum sótt gögn
-  const loading = document.querySelector('.loading');
-  const parent = loading.parentNode;
-  parent.removeChild(loading);
 
   if (!earthquakes) {
     parent.appendChild(

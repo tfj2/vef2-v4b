@@ -1,7 +1,9 @@
 export async function fetchEarthquakes(type, period) {
   // TODO sækja gögn frá proxy þjónustu
+  let result;
   try {
-    result = await fetch(?);
+    const proxyUrl = `/proxy?period=${period}&type=${type}`;
+    result = await fetch(proxyUrl);
   } catch (e) {
     console.error('Villa við að sækja', e);
     return null;
