@@ -11,8 +11,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   let url = document.URL;
   let earthquakes;
   let query;
-  let ekki = '';
-  let strE = '';
   if(url) {
     query = url.split('?')[1];
   }
@@ -21,16 +19,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const period = query.split('&')[0].split('=')[1];
     const type = query.split('&')[1].split('=')[1];
     const result = await fetchEarthquakes(type, period);
-    const data = result.text;
-    const cached = result.info.cached;
-    const elapsed = result.info.elapsed;
     const parent = loading.parentNode;
     parent.removeChild(loading);
-    earthquakes = data.features;
-    strE = String(elapsed);
-    if(cached == false){
-      ekki = 'ekki';
-    };
+    earthquakes = result.features;
   }
   // Fjarlægjum loading skilaboð eftir að við höfum sótt gögn
 
@@ -44,17 +35,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const map = document.querySelector('.map');
 
   init(map);
-
-  
-  const list = el('li');
-
-  list.appendChild(
-    el('div',
-      el('h1', 'Gögn eru ', ekki, ' í cache. Fyrirspurn tók ', strE, ' sek.'),
-    ),
-  );
-
-  ul.appendChild(list);
 
   earthquakes.forEach((quake) => {
     const {
